@@ -1,4 +1,6 @@
 import { pathToFileURL } from 'node:url';
+import { readFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
 
 // Decant's stateless Streamable HTTP endpoint. Node.js 20+, no npm dependencies.
 // This calls a read-only conversion operation; it never submits a commercial request.
@@ -26,8 +28,17 @@ export async function convertPublicDocument(url, sheet, fetcher = fetch) {
   return JSON.parse(result.content.find((c) => c.type === 'text').text);
 }
 
+// The fixture is illustrative synthetic data, never a supplier offer or customer record.
+export async function selfTest(fetcher = fetch) {
+  const url = 'https://raw.githubusercontent.com/al-dca/decant/main/examples/synthetic-supplier-prices.csv';
+  const expected = JSON.parse(await readFile(new URL('./synthetic-supplier-prices.expected.json', import.meta.url), 'utf8'));
+  const result = await convertPublicDocument(url, undefined, fetcher);
+  assert.deepEqual(result, expected, 'Conversion differs from the documented synthetic fixture: inspect before relying on it.');
+  return result;
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  if (!process.argv[2]) { console.error('Usage: node examples/convert-document.mjs <public-file-url> [sheet-name]'); process.exitCode = 2; }
-  else try { console.log(JSON.stringify(await convertPublicDocument(process.argv[2], process.argv[3]), null, 2)); }
+  if (!process.argv[2]) { console.error('Usage: node examples/convert-document.mjs <public-file-url> [sheet-name] | --self-test'); process.exitCode = 2; }
+  else try { console.log(JSON.stringify(process.argv[2] === '--self-test' ? await selfTest() : await convertPublicDocument(process.argv[2], process.argv[3]), null, 2)); }
   catch (error) { console.error(error.message); process.exitCode = 1; }
 }
