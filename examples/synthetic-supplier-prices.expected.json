@@ -1,0 +1,36 @@
+{
+  "type": "csv",
+  "sheets": [
+    {
+      "name": "csv",
+      "header": [
+        "scenario",
+        "part_code",
+        "description",
+        "quantity",
+        "unit_price",
+        "currency"
+      ],
+      "rows": [
+        {
+          "scenario": "SYNTHETIC_ILLUSTRATION",
+          "part_code": "007",
+          "description": "Example bracket, small",
+          "quantity": 12,
+          "unit_price": 3.5,
+          "currency": "USD"
+        },
+        {
+          "scenario": "SYNTHETIC_ILLUSTRATION",
+          "part_code": "010",
+          "description": "Example washer",
+          "quantity": 100,
+          "unit_price": 0.25,
+          "currency": "USD"
+        }
+      ],
+      "row_count": 2,
+      "truncated": false
+    }
+  ]
+}
